@@ -10,6 +10,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useState } from 'react';
+import Alert from "@/shared/alert";
+import { setCookie } from '@/shared/cookie';
 
 function Copyright(props) {
     return (
@@ -30,6 +32,10 @@ const LoginPage = () => {
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [passwordRepeatError, setPasswordRepeatError] = useState(false);
+    const [alertStatus, setAlertStatus] = useState({ open: false, message: "" });
+
+    setCookie("email", "", 0);
+    setCookie("password", "", 0);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -37,25 +43,44 @@ const LoginPage = () => {
 
         if (!data.get('email')) {
             setEmailError(true);
+            return;
         } else {
             setEmailError(false);
         }
 
         if (!data.get('password')) {
             setPasswordError(true);
+            return;
         } else {
             setPasswordError(false);
         }
 
-        if (data.get('passwordRepeat') === data.get('password')) {
+        if (data.get('passwordRepeat') !== data.get('password')) {
             setPasswordRepeatError(true);
+            return;
         } else {
             setPasswordRepeatError(false);
         }
 
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
+        fetch(import.meta.env.VITE_BACKEND_SERVER + "/api/registration", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({ email: data.get('email'), password: data.get('password') }).toString()
+        }).then(response => response.json()).then(resData => {
+            if (resData.hasOwnProperty("error") && resData.error == 1) {
+                setAlertStatus({ message: "Адрес электронной почты уже занят!", open: true });
+                return;
+            }
+
+            setCookie("email", data.get("email"), 1);
+            setCookie("password", data.get("password"), 1);
+
+            window.location.href = "/";
+        }).catch(e => {
+            console.error(e);
+            setAlertStatus({ message: "Неизвестная ошибка!", open: true });
         });
     };
 
@@ -132,6 +157,7 @@ const LoginPage = () => {
                 </Box>
             </Box>
             <Copyright sx={{ mt: 8, mb: 4 }} />
+            <Alert message={alertStatus.message} isOpen={alertStatus.open} setOpen={setAlertStatus} />
         </Container>
     );
 }

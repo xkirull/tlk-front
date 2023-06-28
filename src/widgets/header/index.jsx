@@ -19,7 +19,7 @@ import React, { useState } from "react";
 const drawerWidth = 240;
 const navItems = [
   { title: "Статьи", href: "/" },
-  { title: "Выход", href: "/" },
+  { title: "Выход", href: "/logout" },
 ];
 
 function Header() {

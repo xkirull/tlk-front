@@ -6,6 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import Image from "mui-image";
+import BrokenImageIcon from '@mui/icons-material/BrokenImage';
 import css from "./style.module.css";
 
 function SlideTransition(props) {

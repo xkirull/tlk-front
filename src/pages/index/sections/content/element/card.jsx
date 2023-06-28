@@ -12,7 +12,7 @@ import css from "./style.module.css";
 import { isMobile } from "@/shared/isMobile";
 
 function CardElement(props) {
-  const { title, caption, setStatusDialog, content } = props;
+  const { title, image, caption, setStatusDialog, content } = props;
 
   const clickHandler = () => {
     setStatusDialog(true);
@@ -23,7 +23,7 @@ function CardElement(props) {
       <Box
         sx={{ p: 2, display: "flex", alignItems: "center", columnGap: "12px" }}
       >
-        <Avatar variant="circular" sx={{ width: 56, height: 56 }}>
+        <Avatar src={image} variant="circular" sx={{ width: 56, height: 56 }}>
           {<PersonIcon />}
         </Avatar>
         <Stack spacing={0}>
@@ -35,7 +35,7 @@ function CardElement(props) {
       </Box>
       <Divider />
       <Typography sx={{ p: 3 }}>
-        {content.text.slice(0, isMobile() ? 100 : 150).trim() + "..."}
+        {content.text.length >= 100 ? content.text.slice(0, isMobile() ? 100 : 150).trim() + "..." : content.text}
       </Typography>
     </Card>
   );

@@ -1,40 +1,61 @@
-import { Alert, Box, Container } from "@mui/material";
+import { Alert, Box, Container, Pagination } from "@mui/material";
 import Search from "./search";
 import Content from "./content";
 import { useEffect, useState } from "react";
 import Loading from "@/widgets/loading";
+import FetchAlert from "@/shared/alert";
 
 function IndexContent() {
   const [elements, setElements] = useState([]);
   const [allElementData, setAllElementData] = useState([]);
   const [searchStatus, setSearchStatus] = useState(true);
+  const [alertStatus, setAlertStatus] = useState({ open: false, message: "" });
+  const [pageCount, setPageCount] = useState(0);
 
-  const data = [
-    {
-      "image": "",
-      "title": "Test title",
-      "caption": "12.10.1995",
-      "content": {
-        "image": "",
-        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-      }
-    },
-    {
-      "image": "",
-      "title": "Test title",
-      "caption": "12.10.1995",
-      "content": {
-        "image": "",
-        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-      }
-    },
-  ];
+  function getData(page = 1) {
+    setElements([]);
+    setAllElementData([]);
+    setSearchStatus(true);
+
+    fetch(import.meta.env.VITE_BACKEND_SERVER + "/api/getArticle?page=" + page)
+      .then(response => response.json()).then(data => {
+        console.log(data);
+        const responseData = data.map(el => {
+          return {
+            "image": el.author_image || "",
+            "title": el.title,
+            "caption": el.name + " " + el.date,
+            "content": {
+              "image": el.image || "",
+              "text": el.text,
+            }
+          }
+        });
+
+        setElements(responseData);
+        setAllElementData(responseData);
+        setSearchStatus(false);
+      }).catch(e => {
+        console.error(e);
+        setAlertStatus({ message: "Неизвестная ошибка!", open: true });
+      });
+  }
 
   useEffect(() => {
-    setElements(data);
-    setAllElementData(data);
-    setSearchStatus(false);
+    getData();
+
+    fetch(import.meta.env.VITE_BACKEND_SERVER + "/api/getArticlePageCount")
+      .then(response => response.json()).then(data => {
+        setPageCount(data.pageCount);
+      }).catch(e => {
+        console.error(e);
+        setAlertStatus({ message: "Неизвестная ошибка!", open: true });
+      });
   }, []);
+
+  const handleChange = (event, value) => {
+    getData(value);
+  };
 
   function searchElements(text) {
     function checkElement(element) {
@@ -83,6 +104,12 @@ function IndexContent() {
           <Content arrayOfElements={elements} />
         )}
       </Container>
+
+      <Box sx={{ margin: "48px 20px 0px", display: "flex", justifyContent: "center" }}>
+        <Pagination count={pageCount} shape="rounded" onChange={handleChange} />
+      </Box>
+
+      <FetchAlert message={alertStatus.message} isOpen={alertStatus.open} setOpen={setAlertStatus} />
     </Box>
   );
 }

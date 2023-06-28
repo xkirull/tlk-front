@@ -9,7 +9,7 @@ function Content(props) {
   return (
     <Grid container spacing={{ xs: 2, md: 3 }} justifyContent="center">
       {arrayOfElements.map((itemProps, index) => (
-        <Grid className={css.element} item xs="12" sm="12" key={index}>
+        <Grid className={css.element} item key={index}>
           <ContentElement {...itemProps} />
         </Grid>
       ))}

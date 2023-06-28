@@ -24,7 +24,7 @@ function PopupElement(props) {
         aria-describedby="scroll-dialog-description"
       >
         <DialogTitle>
-          Title
+          {props.title}
           <IconButton
             aria-label="close"
             onClick={togglePopup(false)}

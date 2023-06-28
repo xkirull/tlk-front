@@ -126,7 +126,7 @@ const LoginPage = () => {
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">
+                            <Link href="/accountRecovery" variant="body2">
                                 Забыл пароль
                             </Link>
                         </Grid>

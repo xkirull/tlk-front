@@ -28,7 +28,7 @@ function Copyright(props) {
 
 
 
-const RegistrationPage = () => {
+const RestorePage = () => {
     const [emailError, setEmailError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [passwordRepeatError, setPasswordRepeatError] = useState(false);
@@ -62,7 +62,7 @@ const RegistrationPage = () => {
             setPasswordRepeatError(false);
         }
 
-        fetch(import.meta.env.VITE_BACKEND_SERVER + "/api/registration", {
+        fetch(import.meta.env.VITE_BACKEND_SERVER + "/api/restorePassword", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -70,7 +70,7 @@ const RegistrationPage = () => {
             body: new URLSearchParams({ email: data.get('email'), password: data.get('password') }).toString()
         }).then(response => response.json()).then(resData => {
             if (resData.hasOwnProperty("error") && resData.error == 1) {
-                setAlertStatus({ message: "Адрес электронной почты уже занят!", open: true });
+                setAlertStatus({ message: "Адрес электронной почты не найден!", open: true });
                 return;
             }
 
@@ -99,7 +99,7 @@ const RegistrationPage = () => {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Регистрация
+                    Восстановление аккаунта
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                     <TextField
@@ -145,12 +145,12 @@ const RegistrationPage = () => {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        Зарегистрироваться
+                        Восстановить доступ
                     </Button>
                     <Grid container>
                         <Grid sx={{ display: "flex", justifyContent: "center" }} item xs>
                             <Link href="/login" variant="body2">
-                                {"Уже есть аккаунт? (Войти)"}
+                                {"Вернуться на страницу входа"}
                             </Link>
                         </Grid>
                     </Grid>
@@ -162,4 +162,4 @@ const RegistrationPage = () => {
     );
 }
 
-export default RegistrationPage;
+export default RestorePage;

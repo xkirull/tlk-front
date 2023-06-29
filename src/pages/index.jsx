@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createHashRouter } from "react-router-dom";
 import IndexPage from "./index/index";
 import { LoginPage, RegistrationPage, RestorePage } from "./authorization";
 import Page404 from "./404";
@@ -13,7 +13,7 @@ const Logout = () => {
     return <>logout</>;
 }
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     {
         path: "/",
         element: <IndexPage />,
